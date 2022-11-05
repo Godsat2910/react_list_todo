@@ -1,15 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import EmptyTasks from '../EmptyTasks';
 import Task from '../Task';
 import { Container, ContainerTextNumber, Content, HeaderBoard, TextColor, TextContainer, TextNumber } from './styles';
-
 
 const Board = ({
     tasks,
     setTasks
 }) => {
-    // const createdTasks = complete aqui
-    // const completedTasks = complete aqui
+    const createdTasks = tasks.length
+    const completedTasks = tasks.filter((task) => task.completed).length
+
 
     const updateTask = useCallback(
       (id) => {
@@ -21,13 +21,15 @@ const Board = ({
                 ))
             )
         }
-        console.log(tasks, 'tasks')
+        
       },
       [tasks],
     )
 
-    const deselectTask = useCallback((id) => {
-        // complete aqui
+    const deleteTask = useCallback((id) => {
+        setTasks(
+            tasks.filter((task) => task.id !== id)
+        )
     }, [tasks])
     
   
@@ -36,29 +38,22 @@ const Board = ({
             <TextContainer>
                 <TextColor>Tarefas Criadas</TextColor>
                 <ContainerTextNumber>
-                    <TextNumber>{0}</TextNumber>
+                    <TextNumber>{createdTasks }</TextNumber>
                 </ContainerTextNumber>
             </TextContainer>
             <TextContainer>
                 <TextColor>Concluídas</TextColor>
                 <ContainerTextNumber>
-                    <TextNumber>{0} de {0}</TextNumber>
+                    <TextNumber>{completedTasks} de {createdTasks}</TextNumber>
                 </ContainerTextNumber>
             </TextContainer>
         </HeaderBoard>
         <Content>
-            {
-                tasks && tasks.length ? tasks.map((task) => (
-                    <Task 
-                    task={task}
-                    key={task.id}
-                    updateTask={updateTask}
-                    onDelete={deselectTask}
-                    />
-                ))
-                  :
-                   <EmptyTasks />
-            }
+            {tasks.map((task) => (
+                <Fragment  key={task.id}>
+                    <Task task={task} updateTask={updateTask} onDelete={deleteTask}/>
+                </Fragment>
+            ))}
         </Content>
   </Container>;
 }
